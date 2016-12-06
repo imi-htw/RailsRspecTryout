@@ -1,4 +1,3 @@
 language: ruby
 script:
-  - RAILS_ENV=test bundle exec rake --trace db:schema:load
   - RAILS_ENV=test bundle exec rspec spec
