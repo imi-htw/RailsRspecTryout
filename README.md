@@ -21,10 +21,13 @@ I've found hints on how to configure rspec with in memory sqlite [here](https://
 
 (Note that [silence_stream](http://apidock.com/rails/Kernel/silence_stream) [has been removed from rails](https://github.com/pat/combustion/pull/64))
 
+
+See aeac88ec7b9bd42000b9dbdbc3dcba2e12bcbbd5 for the changes I made.
+
 ## Testing locally
 
 Change the config/database.yml to run sqlite in memory for the test environment (as described in the [Travis Documentation](https://docs.travis-ci.com/user/database-setup/#SQLite3)):
 
-#database: db/test.sqlite3
-database: ":memory:"
-timeout: 500
+    #database: db/test.sqlite3
+    database: ":memory:"
+    timeout: 500
