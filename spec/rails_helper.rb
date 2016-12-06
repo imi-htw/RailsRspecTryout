@@ -21,6 +21,13 @@ require 'rspec/rails'
 # require only the support files necessary.
 #
 # Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+#setup_sqlite_db = lambda do
+  ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
+
+  load "#{Rails.root.to_s}/db/schema.rb" # use db agnostic schema by default
+  # ActiveRecord::Migrator.up('db/migrate') # use migrations
+#end
+#silence_warnings(STDOUT, &setup_sqlite_db)
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
