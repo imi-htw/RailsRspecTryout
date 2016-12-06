@@ -28,6 +28,8 @@ require 'rspec/rails'
   # ActiveRecord::Migrator.up('db/migrate') # use migrations
 #end
 #silence_warnings(STDOUT, &setup_sqlite_db)
+puts "needs_migration: #{ActiveRecord::Migrator.needs_migration?}"
+puts "any_migrations: #{ActiveRecord::Migrator.any_migrations?}"
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.

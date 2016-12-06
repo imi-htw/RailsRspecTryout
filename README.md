@@ -31,3 +31,53 @@ Change the config/database.yml to run sqlite in memory for the test environment 
     #database: db/test.sqlite3
     database: ":memory:"
     timeout: 500
+
+## Versions issue
+
+The application "thinks" that not all migrations have been applied. The difference I found lies within the method insert_versions_sql; the insert is split up into several statements if the db doesn't support multi_insert.
+
+    schema_statements.rb
+
+    def insert_versions_sql(versions) # :nodoc:
+      sm_table = ActiveRecord::Migrator.schema_migrations_table_name
+
+      if supports_multi_insert?
+        sql = "INSERT INTO #{sm_table} (version) VALUES "
+        sql << versions.map {|v| "('#{v}')" }.join(', ')
+        sql << ";\n\n"
+        sql
+      else
+        versions.map { |version|
+          "INSERT INTO #{sm_table} (version) VALUES ('#{version}');"
+        }.join "\n\n"
+      end
+    end
+
+
+    and
+
+    def supports_multi_insert?
+      sqlite_version >= '3.7.11'
+    end
+
+
+
+<pre>
+(0.1ms)  CREATE TABLE "vwords" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "entry" varchar, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL)
+
+(0.1ms)  CREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)
+
+(0.1ms)  SELECT version FROM "schema_migrations"
+
+(0.1ms)  INSERT INTO "schema_migrations" (version) VALUES ('20161108150237')
+
+(0.1ms)  INSERT INTO schema_migrations (version) VALUES ('20161025142613');
+
+INSERT INTO schema_migrations (version) VALUES ('20161025142620');
+
+INSERT INTO schema_migrations (version) VALUES ('20161025142649');
+
+INSERT INTO schema_migrations (version) VALUES ('20161031134630');
+
+(0.2ms)  CREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL)
+</pre>
